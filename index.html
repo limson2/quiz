@@ -1,1 +1,373 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부천일신초 퀴즈</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:"Malgun Gothic",sans-serif;
+ background:linear-gradient(135deg,#fff0f7,#f0edff,#e5f7ff);
+ color:#35334b;
+ min-height:100vh;
+}
+.wrap{max-width:720px;margin:auto;padding:24px 15px 60px}
+.panel{
+ background:white;border:2px solid #eee8ff;
+ border-radius:26px;padding:28px 22px;
+ margin:18px 0;text-align:center;
+ box-shadow:0 10px 30px #7160b015;
+}
+h1{font-size:36px;color:#7359bf;margin:15px 0}
+h2{font-size:26px;color:#59469a}
+p{line-height:1.7;color:#6c6880}
+.pill{
+ display:inline-block;background:#f1eaff;color:#7656b8;
+ border-radius:30px;padding:9px 17px;font-weight:bold;
+ font-size:14px;
+}
+.school{
+ background:linear-gradient(#bceaff,#e5f7ff);
+ border-radius:20px;padding:35px 15px 15px;
+ margin-bottom:25px;
+}
+.building{
+ background:#ffe6b0;border:5px solid #e9b977;
+ border-radius:12px 12px 3px 3px;
+ max-width:360px;margin:auto;
+ padding:12px;
+}
+.roof{font-size:30px;color:#a86c4a;font-weight:bold}
+.windows{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:15px}
+.window{height:42px;background:#9edaf6;border:4px solid white;border-radius:5px}
+.door{width:65px;height:60px;background:#a889d6;margin:10px auto -12px;border:4px solid white;border-radius:8px 8px 0 0}
+.ground{height:16px;background:#9bda9d;border-radius:30px}
+.btn{
+ background:#9076e6;color:white;border:0;
+ border-radius:16px;padding:15px 24px;
+ font-size:18px;font-weight:bold;cursor:pointer;
+ margin:7px;box-shadow:0 4px 0 #6a55b5;
+}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.alt{background:#f18eaf;box-shadow:0 4px 0 #ce6388}
+.btn.soft{background:#e9e4fb;color:#654da3;box-shadow:none}
+.field{
+ width:100%;padding:15px;border:2px solid #e5defa;
+ border-radius:14px;font-size:17px;margin:12px 0;
+ font-family:inherit;
+}
+textarea.field{height:120px;resize:vertical}
+.hidden{display:none!important}
+.top{display:flex;justify-content:space-between;font-weight:bold}
+.bar{height:12px;background:#efebfa;border-radius:20px;margin:20px 0;overflow:hidden}
+.fill{height:100%;background:#aa94f3;transition:width .3s}
+.question{font-size:25px;font-weight:bold;line-height:1.6;margin:35px 0}
+.choices{display:flex;justify-content:center;gap:15px}
+.choices .btn{font-size:44px;width:120px;height:105px}
+.boxes{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.chest{
+ flex:1;max-width:155px;font-size:55px;
+ background:#fff4d9;border:2px solid #ffe0a2;
+ border-radius:20px;padding:22px 5px;cursor:pointer;
+}
+.chest:disabled{opacity:.7;cursor:default}
+.score{font-size:42px;font-weight:900;color:#765ac6}
+.entry{
+ text-align:left;background:#faf8ff;border:1px solid #eee8ff;
+ padding:15px;border-radius:15px;margin:12px 0;
+ overflow-wrap:anywhere;
+}
+.entry strong{color:#7057b5}
+.tag{float:right;background:#fff0d7;padding:5px 10px;border-radius:10px}
+.note{font-size:14px;color:#8a829b}
+footer{text-align:center;color:#999;font-size:12px;margin-top:25px}
+@media(max-width:450px){
+ h1{font-size:30px}
+ .panel{padding:23px 15px}
+ .question{font-size:22px}
+ .chest{font-size:43px}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<section id="start" class="panel">
+ <div class="school">
+  <div class="building">
+   <div class="roof">🏫 부천일신초</div>
+   <div class="windows">
+    <div class="window"></div><div class="window"></div>
+    <div class="window"></div><div class="window"></div>
+    <div class="window"></div><div class="window"></div>
+    <div class="window"></div><div class="window"></div>
+   </div>
+   <div class="door"></div>
+  </div>
+  <div class="ground"></div>
+ </div>
+ <span class="pill">🏫 우리 학교 알아보기</span>
+ <h1>부천일신초 퀴즈</h1>
+ <p>OX 퀴즈 5문제를 풀고 보물상자를 열어 보세요!</p>
+ <p>정답을 맞힐 때마다 특별한 점수가 기다려요 🎁</p>
+ <input id="nickname" class="field" maxlength="20"
+ placeholder="닉네임을 입력해 주세요">
+ <button class="btn" id="startBtn">게임 시작하기 ✨</button>
+ <p class="note">총 5문제! 정답을 맞히면 점수를 얻어요.</p>
+</section>
+
+<section id="quiz" class="panel hidden">
+ <div class="top">
+  <span id="progress">문제 1 / 5</span>
+  <span id="runningScore">0점</span>
+ </div>
+ <div class="bar"><div id="fill" class="fill"></div></div>
+ <span class="pill">맞으면 보물상자 OPEN!</span>
+ <div id="question" class="question"></div>
+ <div class="choices">
+  <button class="btn" id="yes">O</button>
+  <button class="btn alt" id="no">X</button>
+ </div>
+</section>
+
+<section id="feedback" class="panel hidden">
+ <div id="feedbackIcon" style="font-size:60px"></div>
+ <h2 id="feedbackTitle"></h2>
+ <p id="feedbackText"></p>
+ <div id="chestArea" class="hidden">
+  <p>보물상자 하나를 선택하세요!</p>
+  <div class="boxes">
+   <button class="chest">🎁</button>
+   <button class="chest">🎁</button>
+   <button class="chest">🎁</button>
+  </div>
+  <p id="reward" class="score"></p>
+ </div>
+ <button id="next" class="btn hidden">다음으로 ➜</button>
+</section>
+
+<section id="write" class="panel hidden">
+ <span class="pill">🎉 5문제 완료</span>
+ <h2>퀴즈를 마쳤어요!</h2>
+ <p id="finalScore" class="score"></p>
+ <h2>부천일신초의 장점은?</h2>
+ <textarea id="advantage" class="field" maxlength="300"
+ placeholder="우리 학교의 좋은 점을 자유롭게 적어 주세요."></textarea>
+ <button id="save" class="btn">내 결과 공유하기 💜</button>
+ <p id="saveStatus" class="note"></p>
+</section>
+
+<section id="results" class="panel hidden">
+ <span class="pill">🏆 우리 학교 이야기</span>
+ <h2>모두의 퀴즈 결과</h2>
+ <p id="myResult"></p>
+ <button id="refresh" class="btn soft">친구 기록 새로고침 ↻</button>
+ <p id="loadStatus" class="note"></p>
+ <div id="entries"></div>
+ <button id="restart" class="btn alt">다시 도전하기</button>
+</section>
+
+<footer>부천일신초 퀴즈 · 우리 학교를 알아가는 즐거운 시간</footer>
+</main>
+
+<script>
+const SCRIPT_URL =
+'https://script.google.com/macros/s/AKfycbwzy1v-Aab3xsUqURu237rvm2tXtLwWjNB2g1E5dU8H1lg8_iJJMnwUSESTvnIwUxfP-A/exec';
+
+const questions = [
+ {q:'부천일신초가 개교한 년도는 2001년이다.',a:false},
+ {q:'부천일신초는 31학급이다.',a:true},
+ {q:'부천일신초의 학생 수는 남자가 더 많다.',a:true},
+ {q:'부천일신초의 주소는 경기 부천시 범안로95번길 26이다.',a:false},
+ {q:'부천일신초의 교화는 무궁화이다.',a:false}
+];
+
+const $ = id => document.getElementById(id);
+
+let index=0;
+let score=0;
+let nick='';
+let chosen=false;
+let answers=[];
+
+function show(id){
+ ['start','quiz','feedback','write','results'].forEach(x=>{
+  $(x).classList.toggle('hidden',x!==id);
+ });
+ window.scrollTo(0,0);
+}
+
+function render(){
+ if(index>=questions.length){
+  $('finalScore').textContent=score+'점';
+  show('write');
+  return;
+ }
+ $('progress').textContent=`문제 ${index+1} / 5`;
+ $('runningScore').textContent=score+'점';
+ $('fill').style.width=((index+1)/5*100)+'%';
+ $('question').textContent=questions[index].q;
+ show('quiz');
+}
+
+$('startBtn').onclick=()=>{
+ nick=$('nickname').value.trim();
+ if(!nick){
+  alert('닉네임을 입력해 주세요!');
+  return;
+ }
+ index=0;
+ score=0;
+ answers=[];
+ render();
+};
+
+function answer(value){
+ const correct=questions[index].a===value;
+ answers[index]=value?'O':'X';
+ show('feedback');
+
+ $('feedbackIcon').textContent=correct?'🌟':'💡';
+ $('feedbackTitle').textContent=correct?'정답이에요!':'아쉬워요!';
+ $('feedbackText').textContent=correct
+  ?'보물상자를 골라 점수를 획득하세요!'
+  :`정답은 ${questions[index].a?'O':'X'}입니다.`;
+
+ $('chestArea').classList.toggle('hidden',!correct);
+ $('next').classList.toggle('hidden',correct);
+ $('reward').textContent='';
+ chosen=false;
+
+ document.querySelectorAll('.chest').forEach(b=>{
+  b.disabled=false;
+  b.textContent='🎁';
+ });
+}
+
+$('yes').onclick=()=>answer(true);
+$('no').onclick=()=>answer(false);
+
+document.querySelectorAll('.chest').forEach((b,i)=>{
+ b.onclick=()=>{
+  if(chosen)return;
+  chosen=true;
+
+  const reward=[10,20,30][Math.floor(Math.random()*3)];
+  score+=reward;
+
+  document.querySelectorAll('.chest').forEach((c,j)=>{
+   c.disabled=true;
+   if(i===j)c.textContent='💎';
+  });
+
+  $('reward').textContent=`+${reward}점! ✨`;
+  $('next').classList.remove('hidden');
+ };
+});
+
+$('next').onclick=()=>{
+ index++;
+ render();
+};
+
+async function request(payload){
+ const response=await fetch(SCRIPT_URL,{
+  method:'POST',
+  headers:{'Content-Type':'text/plain;charset=utf-8'},
+  body:JSON.stringify(payload),
+  redirect:'follow'
+ });
+ const data=await response.json();
+ if(!data.ok)throw new Error(data.error||'서버 오류');
+ return data;
+}
+
+$('save').onclick=async()=>{
+ const advantage=$('advantage').value.trim();
+
+ if(!advantage){
+  alert('우리 학교의 장점을 적어 주세요!');
+  return;
+ }
+
+ const btn=$('save');
+ btn.disabled=true;
+ $('saveStatus').textContent='저장하는 중이에요…';
+
+ try{
+  await request({
+   action:'save',
+   nickname:nick,
+   score:score,
+   advantage:advantage,
+   answers:answers
+  });
+
+  $('myResult').textContent=`${nick}님의 점수: ${score}점`;
+  $('saveStatus').textContent='';
+  show('results');
+  await load();
+ }catch(e){
+  $('saveStatus').textContent='저장 실패: '+e.message;
+ }finally{
+  btn.disabled=false;
+ }
+};
+
+async function load(){
+ $('loadStatus').textContent='기록을 불러오는 중…';
+ $('entries').replaceChildren();
+
+ try{
+  const response=await fetch(SCRIPT_URL,{
+   method:'GET',
+   redirect:'follow'
+  });
+  const data=await response.json();
+  if(!data.ok)throw new Error(data.error||'서버 오류');
+
+  const rows=(data.results||[]).sort(
+   (a,b)=>Number(b.score)-Number(a.score)
+  );
+
+  $('loadStatus').textContent=`총 ${rows.length}개의 기록`;
+
+  rows.forEach((r,i)=>{
+   const d=document.createElement('div');
+   d.className='entry';
+
+   const name=document.createElement('strong');
+   name.textContent=`${i+1}위 · ${r.nickname||'익명'}`;
+
+   const pts=document.createElement('span');
+   pts.className='tag';
+   pts.textContent=Number(r.score)+'점';
+
+   const detail=document.createElement('p');
+   detail.textContent=r.advantage||'';
+
+   d.append(name,pts,detail);
+   $('entries').append(d);
+  });
+
+  if(!rows.length){
+   $('entries').textContent='아직 등록된 기록이 없어요.';
+  }
+ }catch(e){
+  $('loadStatus').textContent='기록 불러오기 실패: '+e.message;
+ }
+}
+
+$('refresh').onclick=load;
+
+$('restart').onclick=()=>{
+ $('advantage').value='';
+ show('start');
+};
+</script>
+</body>
+</html>
+
